@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "author": "Jim Qi",
-  "license": "ISC"
+  "license": "ISC",
   "engines": {
     "node": "4.0.0"
   }
