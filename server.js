@@ -7,7 +7,7 @@ x = 0;
 const port = 8001;
 
 var server = http.createServer(function(request, response) {
-	response.setHeader('Access-Control-Allow-Origin', 'example.com');
+	response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
     response.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
