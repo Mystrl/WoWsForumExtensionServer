@@ -16,4 +16,4 @@ var server = http.createServer(function(request, response) {
 	response.end(res);
 
 });
-server.listen(port);
+server.listen(process.env.PORT || port);
