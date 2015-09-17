@@ -2,7 +2,10 @@ var http = require('http'), url = require('url'), express = require('express'), 
 var conString = "postgres://username:password@localhost/database";
 
 
-var app = express();
+function init() {
+	const port = 8001;
+
+	var app = express();
 app.get('/db', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM test_table', function(err, result) {
@@ -15,8 +18,6 @@ app.get('/db', function (request, response) {
   });
 })
 
-function init() {
-	const port = 8001;
 
 	var server = http.createServer(function(request, response) {
 		response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
