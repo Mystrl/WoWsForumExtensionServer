@@ -9,6 +9,10 @@
   },
   "author": "Jim Qi",
   "license": "ISC",
+  "dependencies": {
+    "pg": "4.x",
+    "express": "~4.9.x"
+  },
   "engines": {
     "node": "4.0.0"
   }
