@@ -1,6 +1,20 @@
 var http = require('http'), url = require('url'), express = require('express'), pg = require('pg');
 var conString = "postgres://username:password@localhost/database";
 
+
+var app = express();
+app.get('/db', function (request, response) {
+  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    client.query('SELECT * FROM test_table', function(err, result) {
+      done();
+      if (err)
+       { console.error(err); response.send("Error " + err); }
+      else
+       { response.render('pages/db', {results: result.rows} ); }
+    });
+  });
+})
+
 function init() {
 	const port = 8001;
 
@@ -44,16 +58,3 @@ function getUserData(userid, callback2) {
 }
 
 init();
-
-var app = express();
-app.get('/db', function (request, response) {
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('pages/db', {results: result.rows} ); }
-    });
-  });
-})
