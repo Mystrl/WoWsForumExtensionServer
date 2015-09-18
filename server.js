@@ -1,23 +1,7 @@
 var http = require('http'), url = require('url'), express = require('express'), pg = require('pg');
-var conString = "postgres://username:password@localhost/database";
-
 
 function init() {
 	const port = 8001;
-
-	var app = express();
-app.get('/db', function (request, response) {
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('pages/db', {results: result.rows} ); }
-    });
-  });
-})
-
 
 	var server = http.createServer(function(request, response) {
 		response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
@@ -51,11 +35,29 @@ function getUserData(userid, callback2) {
 		});
 
 		response.on('end', function() {
+			storeData(userid, str);
 			return callback2(str);
 		})
 	}
 	
 	http.request(options, callback).end();
+}
+
+function storeData(userid, str) {
+	var conString = "postgres://postgres:@localhost/extensionCache";
+	var client = new pg.Client(process.env.DATABASE_URL);
+	client.connect(function(err) {
+		if(err) {
+			return console.error('could not connect to postgres', err);
+		}
+		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
+			if(err) {
+				return;
+			}
+			client.end();
+		});
+	});
+
 }
 
 init();
