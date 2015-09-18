@@ -52,7 +52,7 @@ function storeData(userid, str) {
 		}
 		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
 			if(err) {
-				return console.error('queryFailed');
+				return console.error(err);
 			}
 			client.end();
 		});
