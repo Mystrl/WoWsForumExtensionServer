@@ -47,13 +47,12 @@ function storeData(userid, str) {
 	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52";
 	var client = new pg.Client(conString);
 	client.connect(function(err) {
-		console.log(err);
 		if(err) {
 			return console.error('could not connect to postgres', err);
 		}
 		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
 			if(err) {
-				return;
+				return console.error('queryFailed');
 			}
 			client.end();
 		});
