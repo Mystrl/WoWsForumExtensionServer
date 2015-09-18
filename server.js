@@ -46,7 +46,7 @@ function getUserData(userid, callback2) {
 function storeData(userid, str) {
 	var conString = "postgres://postgres:@localhost/extensionCache";
 	var client = new pg.Client(process.env.DATABASE_URL);
-	client.connect(function(err) {
+	pg.connect(process.env.DATABASE_URL, function(err) {
 		if(err) {
 			return console.error('could not connect to postgres', err);
 		}
