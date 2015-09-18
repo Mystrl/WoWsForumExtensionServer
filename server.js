@@ -44,7 +44,7 @@ function getUserData(userid, callback2) {
 }
 
 function storeData(userid, str) {
-	var conString = "postgres://ndghadryzgicau:@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52";
+	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52";
 	var client = new pg.Client(conString);
 	client.connect(function(err) {
 		if(err) {
