@@ -23,7 +23,7 @@ function init() {
 				storeData(json.data[accessID]);
 			}
 			response.end(response2);
-		})
+		});
 	});
 	server.listen(process.env.PORT || port);
 }
