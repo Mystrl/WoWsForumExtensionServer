@@ -16,7 +16,7 @@ function init() {
 
 		getUserData(userid, function(response2) {
 			//split the user data so we can store it as individual enteries
-			var idArray = userid.split(", ");
+			var idArray = userid.split(",");
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
 				var json = JSON.parse(response2);
