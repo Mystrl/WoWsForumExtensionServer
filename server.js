@@ -26,7 +26,7 @@ function init() {
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
 				var json = JSON.parse(response2);
-				storeData(accessID, json.data[accessID]);
+				storeData(accessID, JSON.stringify(json.data[accessID]));
 			}
 			response.end(response2);
 		});
