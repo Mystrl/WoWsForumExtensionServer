@@ -66,6 +66,7 @@ function storeData(userid, str) {
  	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52?sslmode=require";
  	var client = new pg.Client(conString);
  	var formattedJSON = recreateJSON(str);
+ 	console.log(formattedJSON);
  	client.connect(function(err) {
  		if(err) {
  			return console.error('could not connect to postgres', err);
@@ -87,7 +88,7 @@ function storeData(userid, str) {
  *
  */
 function recreateJSON(str) {
-	var json = '{"status":"ok","meta":{"count":1},"data":' + JSON.stringify(str) +'}}';
+	var json = '{"status":"ok","meta":{"count":1},"data":' + JSON.stringify(str) +'}';
 	return json;
 }
 
