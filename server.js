@@ -8,7 +8,6 @@ function init() {
 		if (request.url === '/favicon.ico') {
 			//r.writeHead(200, {'Content-Type': 'image/x-icon'} );
 			response.end();
-			console.log('favicon requested');
 			return;
 		}
 		response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
@@ -27,7 +26,7 @@ function init() {
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
 				var json = JSON.parse(response2);
-				storeData(json.data[accessID]);
+				storeData(accessID, json.data[accessID]);
 			}
 			response.end(response2);
 		});
