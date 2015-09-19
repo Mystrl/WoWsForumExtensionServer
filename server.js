@@ -20,13 +20,12 @@ function init() {
 		//userid is a comma delimited array
 		var userid = queryAsObject.userid;
 		var idArray = userid.split(",");
-		console.log(idArray);
 		getUserData(userid, function(response2) {
 			//split the user data so we can store it as individual enteries
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
-				var json = JSON.parse(response2);
-				storeData(accessID, JSON.stringify(json.data[accessID]));
+				var json = JSON.parse(response2);	
+				storeData(accessID, json.data[accessID]);
 			}
 			response.end(response2);
 		});
@@ -56,7 +55,7 @@ function init() {
  		});
 
  		response.on('end', function() {
- 			return callback2(str);
+ 			callback2(str);
  		})
  	}
 
@@ -70,7 +69,7 @@ function init() {
  		if(err) {
  			return console.error('could not connect to postgres', err);
  		}
- 		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
+ 		client.query('INSERT INTO users VALUES (' + userid + ", '" + JSON.stringify(str) +"');", function(err, result) {
  			if(err) {
  				return console.error('query failed', err);
  			}
