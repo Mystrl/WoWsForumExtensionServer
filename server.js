@@ -10,10 +10,6 @@ function init() {
 			response.end();
 			return;
 		}
-		
-		response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://*');
-		//response.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-		//response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
 		var parsedUrl = url.parse(request.url, true);
 		var queryAsObject = parsedUrl.query;
