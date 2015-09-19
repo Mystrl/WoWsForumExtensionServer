@@ -21,7 +21,8 @@ function init() {
 			//split the user data so we can store it as individual enteries
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
-				var json = JSON.parse(response2);	
+				var json = JSON.parse(response2);
+				storeData(json.data[accessID]);	
 			}
 			response.end(response2);
 		});
