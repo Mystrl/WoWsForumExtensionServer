@@ -11,15 +11,30 @@ function init() {
 		var parsedUrl = url.parse(request.url, true);
 		var queryAsObject = parsedUrl.query;
 
+		//userid is a comma delimited array
 		var userid = queryAsObject.userid;
 
 		getUserData(userid, function(response2) {
+			//split the user data so we can store it as individual enteries
+			var idArray = userid.split(", ");
+			for (var i = 0; i < idArray.length; i++) {
+				var accessID = idArray[i];
+				var json = JSON.parse(response2);
+				storeData(json.data[accessID]);
+			}
 			response.end(response2);
 		})
 	});
 	server.listen(process.env.PORT || port);
 }
 
+/*
+ * Returns a json containing user data on all userid's in the userid array
+ *
+ * @param {integer array} userid - comma delimited array of userid's we want data for
+ * @param {function} callback2 - used to send result back to init();
+ *
+ */
 function getUserData(userid, callback2) {
 	var result = '';
 	var options = {
@@ -35,7 +50,6 @@ function getUserData(userid, callback2) {
 		});
 
 		response.on('end', function() {
-			storeData(userid, str);
 			return callback2(str);
 		})
 	}
@@ -52,7 +66,7 @@ function storeData(userid, str) {
 		}
 		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
 			if(err) {
-				return console.error(err);
+				return console.error('query failed', err);
 			}
 			client.end();
 		});
