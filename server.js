@@ -41,7 +41,7 @@ function getUserData(userid, callback2) {
 	var result = '';
 	var options = {
  		host: 'api.worldofwarships.com',
- 		path: '/wows/account/info/?application_id=demo&extra=statistics.pvp_solo&account_id=' + userid
+ 		path: '/wows/account/info/?application_id=ed959007246c32a0db3ba867fe835468&extra=statistics.pvp_solo&account_id=' + userid
  	};
 
  	callback = function(response) {
@@ -59,11 +59,17 @@ function getUserData(userid, callback2) {
  	http.request(options, callback).end();
  }
 
+/*
+ * Returns a json containing user data on all userid's in the userid array
+ *
+ * @param {integer} userid - single user id. primary key of the table entry
+ * @param {string} str - string representation of a json for one userid
+ *
+ */
 function storeData(userid, str) {
  	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52?sslmode=require";
  	var client = new pg.Client(conString);
  	var formattedJSON = recreateJSON(str);
- 	console.log(formattedJSON);
  	client.connect(function(err) {
  		if(err) {
  			return console.error('could not connect to postgres', err);
