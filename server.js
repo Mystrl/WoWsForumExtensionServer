@@ -10,9 +10,10 @@ function init() {
 			response.end();
 			return;
 		}
-		response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
-		response.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-		response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+		
+		//response.setHeader('Access-Control-Allow-Origin', 'chrome-extension://pmbkfeiiphpkcbenfodfeoclgbinpdmb');
+		//response.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+		//response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
 		var parsedUrl = url.parse(request.url, true);
 		var queryAsObject = parsedUrl.query;
@@ -25,7 +26,6 @@ function init() {
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
 				var json = JSON.parse(response2);	
-				storeData(accessID, json.data[accessID]);
 			}
 			response.end(response2);
 		});
