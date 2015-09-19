@@ -22,7 +22,7 @@ function init() {
 			for (var i = 0; i < idArray.length; i++) {
 				var accessID = idArray[i];
 				var json = JSON.parse(response2);
-				storeData(json.data[accessID]);	
+				storeData(accessID, json.data[accessID]);	
 			}
 			response.end(response2);
 		});
