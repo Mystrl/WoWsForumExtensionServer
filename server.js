@@ -53,7 +53,7 @@ function init() {
 					var userid = useridInCache[count];
 					getFromCache(userid, function(jsonFromCache) {
 						responseJSON.data[userid] = jsonFromCache;
-						//console.log(jsonFromCache);
+						console.log(jsonFromCache);
 						count++;
 						setTimeout(callback, 50);
 					});
@@ -184,7 +184,7 @@ function getFromCache(userid,callback) {
 	}
 
 	executeQuery(query, function(result) {
-		callback(result.rows[0]);
+		callback(result.rows[0].userData);
 	});
 }
 
