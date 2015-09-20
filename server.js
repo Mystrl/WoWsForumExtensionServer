@@ -114,9 +114,10 @@ function init() {
  */
 function getUserData(userid, getResponseDataCallback) {
 	var result = '';
+
 	var options = {
  		host: 'api.worldofwarships.com',
- 		path: '/wows/account/info/?application_id=ed959007246c32a0db3ba867fe835468&extra=statistics.pvp_solo&account_id=' + userid
+ 		path: '/wows/account/info/?application_id=ed959007246c32a0db3ba867fe835468&extra=statistics.pve%2C%20statistics.pve_solo%2C%20statistics.pve_div2%2C%20statistics.pve_div3%2C%20statistics.pvp_solo%2C%20statistics.pvp_div2%2C%20statistics.pvp_div3&account_id=' + userid
  	};
 
  	callback = function(response) {
