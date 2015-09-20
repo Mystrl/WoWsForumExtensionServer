@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "pg": "4.x",
-    "express": "~4.9.x"
+    "express": "~4.9.x",
+    "async": "1.x.x"
   },
   "engines": {
     "node": "4.0.0"
