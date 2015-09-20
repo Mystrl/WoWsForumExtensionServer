@@ -36,7 +36,6 @@ function init() {
 		//remember to update count
 		//we build a responseJSON from cached and uncached data
 		var responseJSON = {"status":"ok","meta":{"count":0},"data":{}};
-		console.log(useridNotCached + " //// " + useridInCache.length);
 		if (useridInCache.length > 0) {
 			/*
 			for (var cachedUserIDIndex = 0; cachedUserIDIndex < useridInCache.length; cachedUserIDIndex++) {
@@ -53,13 +52,11 @@ function init() {
 					var userid = useridInCache[count];
 					getFromCache(userid, function(jsonFromCache) {
 						responseJSON.data[userid] = jsonFromCache;
-						console.log(jsonFromCache);
 						count++;
 						setTimeout(callback, 50);
 					});
 				},
 				function(err) {
-					console.log(useridNotCached + " " + useridInCache);
 					//if there are uncached user ids we need to get them from the api and then add them to responseJSON before sending it to the client
 					if (useridNotCached.length > 0) {
 						getUserData(useridNotCached, function(jsonString) {
@@ -68,7 +65,6 @@ function init() {
 								var accessID = useridNotCached[unCachedUserIdIndex];
 								var json = JSON.parse(jsonString);
 								storeData(accessID, json.data[accessID]);
-								console.log("test");
 								responseJSON.data[accessID] = json.data[accessID];
 							}
 							response.end(JSON.stringify(responseJSON));
@@ -82,7 +78,6 @@ function init() {
 			);
 		}
 		else {
-			console.log(useridNotCached + " " + useridInCache);
 			//if there are uncached user ids we need to get them from the api and then add them to responseJSON before sending it to the client
 			if (useridNotCached.length > 0) {
 				getUserData(useridNotCached, function(jsonString) {
@@ -91,7 +86,6 @@ function init() {
 						var accessID = useridNotCached[unCachedUserIdIndex];
 						var json = JSON.parse(jsonString);
 						storeData(accessID, json.data[accessID]);
-						console.log("test");
 						responseJSON.data[accessID] = json.data[accessID];
 					}
 					response.end(JSON.stringify(responseJSON));
@@ -158,7 +152,6 @@ function inCache(userid, returnIDArrays) {
 							setTimeout(callback, 50);
 					}
 					else {
-						console.log(count);
 						useridNotCached.push(userid[count]);
 							count++;
 							setTimeout(callback, 50);
@@ -203,7 +196,6 @@ function storeData(userid, str) {
 		values: [userid, JSON.stringify(str)]
 	}
 	executeQuery(query, function(res) {
-		console.log("StoreData:" + res);
 	});
  }
 
