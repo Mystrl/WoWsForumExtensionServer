@@ -1,4 +1,4 @@
-var http = require('http'), url = require('url'), express = require('express'), pg = require('pg');
+var http = require('http'), url = require('url'), express = require('express'), pg = require('pg'), async = require('async');
 
 function init() {
 	const port = 8001;
@@ -23,55 +23,65 @@ function init() {
 	server.listen(process.env.PORT || port);
 }
 
-//TODO
-function getResponseData(userid, response) {
+/*
+ *
+ * @param {int array} userid - array of userids we need data for
+ *
+ */
+ function getResponseData(userid, response) {
 	//split user ids into cached and notcached
 	//use getUserData to get jsons for ids not in cache
 	//user getFromCache for ids in cache
-	var useridInCache = [];
-	var useridNotCached = [];
-	for (var j = 0; j < userid.length; j++) {
-		if(!inCache(userid[j])) {
-			useridNotCached.push(userid[j]);
+	inCache(userid, function(useridInCache, useridNotCached) {
+		//remember to update count
+		//we build a responseJSON from cached and uncached data
+		var responseJSON = {"status":"ok","meta":{"count":0},"data":{}};
+
+		if (useridInCache.length > 0) {
+			/*
+			for (var cachedUserIDIndex = 0; cachedUserIDIndex < useridInCache.length; cachedUserIDIndex++) {
+				var userid = useridInCache[cachedUserIDIndex]
+				var jsonFromCache = getFromCache(userid);
+				responseJSON.data[userid] = jsonFromCache;
+				//TODO implement getFromCache
 			}
-		else {
-			useridInCache.push(userid[j]);
+			*/
+			count = 0
+			async.whilst(
+				function () {return count < useridInCache.length},
+				function (callback) {
+					var userid = useridInCache[count];
+					getFromCache(userid, function(jsonFromCache) {
+						responseJSON.data[userid] = jsonFromCache;
+						console.log(jsonFromCache);
+						count++;
+						setTimeout(callback, 1000);
+					});
+				},
+				function(err) {
+					console.log(responseJSON);
+					//if there are uncached user ids we need to get them from the api and then add them to responseJSON before sending it to the client
+					if (useridNotCached.length > 0) {
+						getUserData(useridNotCached, function(jsonString) {
+						//split the user data so we can store it as individual enteries
+							for (var unCachedUserIdIndex = 0; unCachedUserIdIndex < useridNotCached.length; unCachedUserIdIndex++) {
+								var accessID = useridNotCached[unCachedUserIdIndex];
+								var json = JSON.parse(jsonString);
+								storeData(accessID, json.data[accessID]);
+
+								responseJSON.data[accessID] = json.data[accessID];
+							}
+							response.end(JSON.stringify(responseJSON));
+						});
+					}
+					//otherwise just send responseJSON
+					else {
+						response.end(JSON.stringify(responseJSON));
+					}
+				}
+			);
 		}
-	}
-
-	//remember to update count
-
-	//we build a responseJSON from cached and uncached data
-	var responseJSON = {"status":"ok","meta":{"count":0},"data":{}};
-
-	if (useridInCache.length > 0) {
-		for (var cachedUserIDIndex = 0; cachedUserIDIndex < useridInCache.length; cachedUserIDIndex++) {
-			var userid = useridInCache[cachedUserIDIndex]
-			var jsonFromCache = getFromCache(userid);
-			responseJSON.data[userid] = jsonFromCache;
-			//TODO implement getFromCache
-		}
-	}
-
-	//if there are uncached user ids we need to get them from the api and then add them to responseJSON before sending it to the client
-	if (useridNotCached.length > 0) {
-		getUserData(useridNotCached, function(jsonString) {;
-			//split the user data so we can store it as individual enteries
-			for (var unCachedUserIdIndex = 0; unCachedUserIdIndex < useridNotCached.length; unCachedUserIdIndex++) {
-				var accessID = useridNotCached[unCachedUserIdIndex];
-				var json = JSON.parse(jsonString);
-				storeData(accessID, json.data[accessID]);
-
-				responseJSON.data[accessID] = json.data[accessID];
-			}
-			response.end(JSON.stringify(responseJSON));
-		});
-	}
-	//otherwise just send responseJSON
-	else {
-		response.end(JSON.stringify(responseJSON));
-	}
-
+	});
 }
 
 /*
@@ -105,9 +115,57 @@ function getUserData(userid, getResponseDataCallback) {
 
 //TODO
 // should deal with outdated information in here
-function inCache(userid) {
-	return false;
+function inCache(userid, returnIDArrays) {
+	var count = 0;
+
+	var useridInCache = [];
+	var useridNotCached = [];
+	async.whilst(
+		function () {return count < userid.length},
+		function (callback) {
+				var query = {
+					text: 'SELECT COUNT(*) FROM users WHERE userid = $1',
+					values: [userid[count]]
+				}
+
+
+				var result = executeQuery(query, function(result) {
+					if (Boolean(result.rows[0].count)) {
+						useridInCache.push(userid[count]);
+							count++;
+							setTimeout(callback, 1000);
+					}
+					else {
+						useridNotCached.push(userid[count]);
+							count++;
+							setTimeout(callback, 1000);
+					}
+				});
+
+		},
+		function (err) {
+			returnIDArrays(useridInCache, useridNotCached);
+		}
+	);
+
 }
+
+/*
+ *
+ * @param {int} userid - primary key of the entry we want from table users
+ *
+ */
+function getFromCache(userid,callback) {
+	var query = {
+		text: 'SELECT * FROM users WHERE userid = $1',
+		values: [userid]
+	}
+
+	executeQuery(query, function(result) {
+		callback(result.rows[0]);
+	});
+}
+
 /*
  * Returns a json containing user data on all userid's in the userid array
  *
@@ -116,21 +174,40 @@ function inCache(userid) {
  *
  */
 function storeData(userid, str) {
- 	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52?sslmode=require";
+	//build parameterized query object
+	var query = {
+		text: 'INSERT INTO users VALUES ($1, $2)',
+		values: [userid, JSON.stringify(str)]
+	}
+	executeQuery(query, function(res) {
+		console.log(res);
+	});
+ }
+
+/*
+ * Returns a json containing user data on all userid's in the userid array
+ *
+ * @param {object} query - parameterized sql query object
+ *
+ * returns result of the query or an error
+ *
+ */
+ function executeQuery(query, callbackResponse) {
+ 	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52?ssl=true";
  	var client = new pg.Client(conString);
  	//var formattedJSON = recreateJSON(str);
  	client.connect(function(err) {
  		if(err) {
  			return console.error('could not connect to postgres', err);
  		}
- 		client.query('INSERT INTO users VALUES (' + userid + ", '" + JSON.stringify(str) +"');", function(err, result) {
+ 		client.query(query, function(err, result) {
  			if(err) {
  				return console.error('query failed', err);
  			}
+ 			callbackResponse(result);
  			client.end();
  		});
  	});
-
  }
 
 /*
