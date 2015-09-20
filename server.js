@@ -123,7 +123,7 @@ function storeData(userid, str) {
  		if(err) {
  			return console.error('could not connect to postgres', err);
  		}
- 		client.query('INSERT INTO users VALUES (' + userid + ", '" + str +"');", function(err, result) {
+ 		client.query('INSERT INTO users VALUES (' + userid + ", '" + JSON.stringify(str) +"');", function(err, result) {
  			if(err) {
  				return console.error('query failed', err);
  			}
