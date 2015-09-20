@@ -1,4 +1,4 @@
-var http = require('http'), url = require('url'), express = require('express'), pg = require('pg'), async = require('async');
+var http = require('http'), url = require('url'), pg = require('pg'), async = require('async');
 
 function init() {
 	const port = 8001;
