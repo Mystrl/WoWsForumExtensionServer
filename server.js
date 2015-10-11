@@ -208,8 +208,7 @@ function storeData(userid, str) {
  *
  */
  function executeQuery(query, callbackResponse) {
- 	var conString = "postgres://cfeijyxzuzivie:Uw7oiu8MRXIwP1P9Pv_pCnEarj@ec2-54-235-162-144.compute-1.amazonaws.com:5432/d2ertkkobk0u52?ssl=true";
- 	console.log(process.env);
+ 	var conString = process.env.DATABASE_URL;
  	var client = new pg.Client(conString);
  	//var formattedJSON = recreateJSON(str);
  	client.connect(function(err) {
